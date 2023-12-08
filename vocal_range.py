@@ -34,6 +34,7 @@ user_freq = librosa.octs_to_hz(user_octave)
 user_midi = librosa.hz_to_midi(user_freq)
 
 # MIDI 번호를 음이름과 옥타브 번호로 변환
-user_note = librosa.midi_to_note(np.round(user_midi.mean()))
+lowest_note = librosa.midi_to_note(np.round(user_midi.min()))
+highest_note = librosa.midi_to_note(np.round(user_midi.max()))
 
-print(f"당신의 목소리는 {user_note}에 가깝습니다.")
+print(f"당신의 목소리에서 가장 낮은 음은 {lowest_note}, 가장 높은 음은 {highest_note}입니다.")
