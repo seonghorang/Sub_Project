@@ -2,7 +2,7 @@ import librosa
 import numpy as np
 
 # 오디오 파일 로드
-y, sr = librosa.load('./voice/그대만있다면.mp3')
+y, sr = librosa.load('./voice/좋아해.mp3')
 
 # 피치 추적
 pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
