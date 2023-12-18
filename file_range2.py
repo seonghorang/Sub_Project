@@ -2,7 +2,7 @@ import librosa
 import numpy as np
 
 # 오디오 파일 로드
-y, sr = librosa.load('./voice/좋아해_-0.5.mp3')
+y, sr = librosa.load('./voice/한숨_-3.5.mp3')
 
 # chroma feature 추출
 chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
