@@ -1,9 +1,0 @@
-<h1>음역대 측정 페이지</h1>
-<button type="button">음성 입력</button>
-<br />
-<br />
-<br />
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">파일 측정</button>
-</form>
