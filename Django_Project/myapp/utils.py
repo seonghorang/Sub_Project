@@ -18,3 +18,8 @@ def handle_uploaded_file(f):
     spectral_contrast = librosa.feature.spectral_contrast(y=y,sr=sr)
 
     return spectral_contrast
+
+def calculate_frequency_range(file_path):
+    y, sr = librosa.load(file_path)
+    spectral_centroids = librosa.feature.spectral_centroid(y, sr=sr)[0]
+    return min(spectral_centroids), max(spectral_centroids)

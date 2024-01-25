@@ -1,0 +1,18 @@
+<html>
+  <head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" />
+  </head>
+  <body>
+    <h1>음역대 측정 페이지</h1>
+    <button type="button">음성 입력</button>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">파일 측정</button>
+    </form>
+    {% if key and file_name %}
+    <p>파일 이름: {{ file_name }}</p>
+    <p>키: {{ key }}</p>
+    {% endif %}
+  </body>
+</html>
