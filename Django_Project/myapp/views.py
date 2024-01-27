@@ -39,16 +39,22 @@ def handle_uploaded_file(f, request):
     return f.name, key
 
 def range(request):
-    file_name = None
-    key = None
     if request.method == "POST":
         form = Uploadfileform(request.POST, request.FILES)
         if form.is_valid():
             file_name, key = handle_uploaded_file(request.FILES['file'], request)
-            request.session['key'] = key
+            request.session['viewed'] = False
             return HttpResponseRedirect('/range')
     else:
         form = Uploadfileform()
-    key = request.session.get('key', None)
-    file_name = request.session.get('file_name', None)
-    return render(request, 'myapp/range.html', {'form': form, 'key': key, 'file_name':file_name})
+        key = request.session.get('key')
+        file_name = request.session.get('file_name')
+        viewed = request.session.get('viewed',True)
+        if viewed:
+            if key is not None and file_name is not None:
+                del request.session['key']
+                del request.session['file_name']
+            return render(request, 'myapp/range.html', {'form':form})
+        else:
+            request.session['viewed'] = True
+    return render(request, 'myapp/range.html', {'form': form, 'key': key,'file_name':file_name})
