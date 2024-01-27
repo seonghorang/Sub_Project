@@ -5,14 +5,88 @@
   </head>
   <body>
     <h1>음역대 측정 페이지</h1>
-    <button type="button">음성 입력</button>
+    <button type="button" id="voice_input">음성 입력</button>
+    <div id="recording_buttons" style="display: none">
+      <button onclick="startrecording()">녹음 시작</button>
+      <button onclick="stoprecording()">녹음 종료</button>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %} {{ form.as_p }}
       <button type="submit">파일 측정</button>
     </form>
+
     {% if key and file_name %}
     <p>파일 이름: {{ file_name }}</p>
     <p>키: {{ key }}</p>
     {% endif %}
+
+    <script>
+      document
+        .getElementById("voice_input")
+        .addEventListener("click", function () {
+          document.getElementById("recording_buttons").style.display = "block";
+        });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          let cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      let mediaRecorder;
+      let chunks = [];
+
+      async function startrecording() {
+        let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+
+        mediaRecorder.ondataavailable = function (e) {
+          chunks.push(e.data);
+        };
+      }
+
+      function stoprecording() {
+        mediaRecorder.stop();
+
+        mediaRecorder.onstop = function (e) {
+          let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+          chunks = [];
+
+          let formData = new FormData();
+          formData.append("audio", blob);
+
+          let csrftoken = getCookie("csrftoken");
+
+          fetch("/range", {
+            method: "POST",
+            body: formData,
+            headers: {
+              "X-CSRFToken": csrftoken,
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("HTTP error" + response.status);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        };
+      }
+    </script>
   </body>
 </html>
