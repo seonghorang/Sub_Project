@@ -55,6 +55,10 @@
 
         mediaRecorder.ondataavailable = function (e) {
           chunks.push(e.data);
+          console.log(
+            "Data available after MediaRecorder.ondataavailable event:",
+            e.data
+          );
         };
       }
 
@@ -64,6 +68,8 @@
         mediaRecorder.onstop = function (e) {
           let blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
           chunks = [];
+
+          console.log("Converted Blob:", blob);
 
           let formData = new FormData();
           formData.append("audio", blob);
@@ -77,9 +83,13 @@
               "X-CSRFToken": csrftoken,
             },
           })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("HTTP error" + response.status);
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.key) {
+                let p = document.createElement("p");
+                p.textContent = "녹음된 키: " + data.key;
+                document.body.appendChild(p);
+                console.log(data);
               }
             })
             .catch((error) => {
